@@ -1,0 +1,72 @@
+    - name: Verificar el registro DNS {{ item }}.{{ dominio_nodos }}
+      debug: msg="{{ lookup('dig', "{{ item }}.{{ dominio_nodos }}")}}"
+      register: dns_lan
+
+    - name: DEBUG IMPRIMIR EL RESULTADO DEL LOOKUP ANTERIOR
+      debug:
+        var: dns_lan
+
+    - name: Arrojar error si el registro DNS ya existe
+      fail:
+        msg: Error, el registro DNS {{ item }}.{{ dominio_nodos }} ya existe
+      when: dns_lan.msg != "NXDOMAIN"
+
+    - name: Obtener la siguiente direccion IP disponible en el segmento de LAN
+      set_fact:
+#        ip_lan: "{{ lookup('nios_next_ip', '10.96.96.0/23') }}"
+        ip_lan: "{{ lookup('nios_next_ip', red_lan ) }}"
+
+    - name: Crear el registro DNS {{ item }}.{{ dominio_nodos }} - {{ ip_lan }}
+      import_tasks: tasks/crear_registro_dns.yml
+      vars:
+        dns_hostname: "{{ item }}.{{ dominio_nodos }}"
+#        ip_address: "{{ ip_lan | join(' ') }}"
+        ip_address: "{{ ip_lan[0] }}"
+
+
+
+
+    - name: Verificar el registro DNS {{ item }}_hb.{{ dominio_nodos }}
+      debug: msg="{{ lookup('dig', "{{ item }}_hb.{{ dominio_nodos }}")}}"
+      register: dns_hb
+
+    - name: Arrojar error si el registro DNS ya existe
+      fail:
+        msg: Error, el registro DNS {{ item }}_hb.{{ dominio_nodos }} ya existe
+      when: dns_hb.msg != "NXDOMAIN"
+
+    - name: Obtener la siguiente direccion IP disponible en el segmento de heartbeat
+      set_fact:
+#        ip_hb: "{{ lookup('nios_next_ip', '192.168.223.0/24') }}"
+        ip_hb: "{{ lookup('nios_next_ip', red_hb ) }}"
+
+    - name: Crear el registro DNS {{ item }}_hb.{{ dominio_nodos }} - {{ ip_hb }}
+      import_tasks: tasks/crear_registro_dns.yml
+      vars:
+        dns_hostname: "{{ item }}_hb.{{ dominio_nodos }}"
+#        ip_address: "{{ ip_hb | join(' ') }}"
+        ip_address: "{{ ip_hb[0] }}"
+
+
+
+    - name: Verificar el registro DNS {{ item }}_backup.{{ dominio_nodos }}
+      debug: msg="{{ lookup('dig', "{{ item }}_backup.{{ dominio_nodos }}")}}"
+      register: dns_backup
+
+    - name: Arrojar error si el registro DNS ya existe
+      fail:
+        msg: Error, el registro DNS {{ item }}_backup.{{ dominio_nodos }} ya existe
+      when: dns_backup.msg != "NXDOMAIN"
+
+    - name: Obtener la siguiente direccion IP disponible en el segmento de backup
+      set_fact:
+#        ip_backup: "{{ lookup('nios_next_ip', '192.168.224.0/24') }}"
+        ip_backup: "{{ lookup('nios_next_ip', red_backup ) }}"
+
+    - name: Crear el registro DNS {{ item }}_backup.{{ dominio_nodos }} - {{ ip_backup }}
+      import_tasks: tasks/crear_registro_dns.yml
+      vars:
+        dns_hostname: "{{ item }}_backup.{{ dominio_nodos }}"
+#        ip_address: "{{ ip_backup | join(' ') }}"
+        ip_address: "{{ ip_backup[0] }}"
+

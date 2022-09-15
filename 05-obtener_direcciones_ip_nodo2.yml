@@ -1,0 +1,33 @@
+---
+- name: Obtener direcciones IP del nodo2
+  hosts: all
+  connection: local
+
+  tasks:
+
+    - name: Obtener la siguiente direccion IP disponible en el segmento de LAN
+      set_stats:
+        data:
+          ip_lan_nodo2: "{{ lookup('nios_next_ip', '192.168.1.0/24') }}"
+
+    - name: Obtener la siguiente direccion IP disponible en el segmento de heartbeat
+      set_stats:
+        data:
+          ip_hb_nodo2: "{{ lookup('nios_next_ip', '10.10.15.0/24') }}"
+
+    - name: Obtener la siguiente direccion IP disponible en el segmento de backup
+      set_stats:
+        data:
+          ip_backup_nodo2: "{{ lookup('nios_next_ip', '10.10.0.0/24') }}"
+
+    - name: Imprimir la IP LAN
+      debug:
+        var: ip_lan_nodo2
+
+    - name: Imprimir la IP de heartbeat
+      debug:
+        var: ip_hb_nodo2
+
+    - name: Imprimir la IP de backup
+      debug:
+        var: ip_backup_nodo2

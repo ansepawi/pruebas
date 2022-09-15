@@ -1,0 +1,10 @@
+    - name: Crear el registro DNS {{ dns_hostname }} - {{ ip_address }}
+      nios_a_record:
+        name: "{{ dns_hostname }}"
+        ipv4: "{{ ip_address }}"
+        state: present
+        view: default
+        provider:
+          host: '{{ lookup("env", "INFOBLOX_HOST") }}'
+          username: '{{ lookup("env", "INFOBLOX_USERNAME") }}'
+          password: '{{ lookup("env", "INFOBLOX_PASSWORD") }}'

@@ -1,0 +1,11 @@
+    - name: Borrar el registro DNS {{ dns_hostname }}.cybertron.int - {{ ip_address }}
+      nios_a_record:
+        name: "{{ dns_hostname }}.cybertron.int"
+        ipv4: "{{ ip_address }}"
+        state: absent
+        view: default
+        provider:
+          host: '{{ lookup("env", "INFOBLOX_HOST") }}'
+          username: '{{ lookup("env", "INFOBLOX_USERNAME") }}'
+          password: '{{ lookup("env", "INFOBLOX_PASSWORD") }}'
+

@@ -1,0 +1,5 @@
+---
+nios_provider:
+  host: 192.168.1.3
+  username: admin
+  password: redhat01

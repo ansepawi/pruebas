@@ -1,0 +1,24 @@
+---
+- name: Crear el registro DNS del nodo 2
+  hosts: all
+  connection: local
+
+  tasks:
+
+    - name: Crear el registro DNS {{ hostname_nodo2 }}.{{ dominio_nodos }} - {{ ip_lan_nodo2 }}
+      import_tasks: tasks/crear_registro_dns.yml
+      vars:
+        dns_hostname: "{{ hostname_nodo2 }}.{{ dominio_nodos }}"
+        ip_address: "{{ ip_lan_nodo2 | join(' ') }}"
+
+    - name: Crear el registro DNS {{ sql_cluster }}_hb2.{{ dominio_nodos }} - {{ ip_hb_nodo2 }}
+      import_tasks: tasks/crear_registro_dns.yml
+      vars:
+        dns_hostname: "{{ sql_cluster }}_hb2.{{ dominio_nodos }}"
+        ip_address: "{{ ip_hb_nodo2 | join(' ') }}"
+
+    - name: Crear el registro DNS {{ sql_cluster }}_backup2.{{ dominio_nodos }} - {{ ip_backup_nodo2 }}
+      import_tasks: tasks/crear_registro_dns.yml
+      vars:
+        dns_hostname: "{{ sql_cluster }}_backup2.{{ dominio_nodos }}"
+        ip_address: "{{ ip_backup_nodo2 | join(' ') }}"

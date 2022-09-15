@@ -1,0 +1,71 @@
+---
+- name: INFOBLOX
+  hosts: all
+  connection: local
+
+  tasks:
+#    - name: fetch all networkview objects
+#      set_fact:
+#        my_networkviews: "{{ lookup('nios', 'networkview', provider=nios_provider) }}"
+
+#    - name: check the networkviews
+#      debug:
+#        var: my_networkviews
+
+#    - name: fetch all network objects
+#      set_fact:
+#        my_networks: "{{ lookup('nios', 'network', provider=nios_provider) }}"
+
+#    - name: check the networks
+#      debug:
+#        var: my_networks
+
+#    - name: fetch all record:a objects
+#      set_fact:
+#        my_record_a: "{{ lookup('nios', 'record:a', provider=nios_provider) }}"
+
+#    - name: check the record:a
+#      debug:
+#        var: my_record_a
+
+#    - name: fetch all record:host objects
+#      set_fact:
+#        my_record_host: "{{ lookup('nios', 'record:host', provider=nios_provider) }}"
+
+#    - name: check the record:host
+#      debug:
+#        var: my_record_host
+
+#    - name: fetch host fw
+#      set_fact:
+#        my_host: "{{ lookup('nios', 'record:host', filter={'name': 'fw.cybertron.int'}, provider=nios_provider) }}"
+
+#    - name: check the my_host return variable
+#      debug:
+#        var: my_host
+
+    - name: Obtener la siguiente direccion IP disponible en el segmento de LAN con set_fact
+      set_stats:
+        data:
+          ip_lan: "{{ lookup('nios_next_ip', '192.168.1.0/24', provider=nios_provider) }}"
+
+    - name: Obtener la siguiente direccion IP disponible en el segmento de heartbeat con set_stats
+      set_stats:
+        data:
+          ip_hb: "{{ lookup('nios_next_ip', '10.10.15.0/24', provider=nios_provider) }}"
+
+    - name: Verificar la direccion IP de la LAN (set_fact) 
+      debug:
+        var: ip_lan
+
+    - name: Verificar la dirección IP de heartbeat (set_stats)
+      debug:
+        var: ip_hb
+
+    - name: configure an A record
+      nios_a_record:
+        name: "{{ hostname_nodo1 }}.cybertron.int"
+        ipv4: "{{ ip_lan }}"
+        state: absent
+        provider: "{{ nios_provider }}"
+        view: default

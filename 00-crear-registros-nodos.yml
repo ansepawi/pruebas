@@ -1,0 +1,10 @@
+---
+- name: Registrar las direcciones IP de los nodos del cluster en Infoblox
+  hosts: all
+  connection: local
+
+  tasks:
+
+    - name: Crear los registros DNS del nodo {{ item }}
+      include_tasks: tasks/crear_registros_dns.yml
+      with_items: "{{ hostnames }}"
